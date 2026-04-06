@@ -7,9 +7,10 @@ class TransactionNode {
 public:
     Transaction transaction;
     TransactionNode* next;
+    TransactionNode* prev;
 
     
-    TransactionNode(const Transaction& t): transaction(t), next(nullptr) {
+    TransactionNode(const Transaction& t): transaction(t), next(nullptr), prev(nullptr) {
         //this->transaction = t;
         //this->next = nullptr;
     }
