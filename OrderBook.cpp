@@ -4,7 +4,9 @@ OrderBook::OrderBook() {
     buyHead = nullptr;
     sellHead = nullptr;
     transactionHead = nullptr;
-
+    buyTail = nullptr;
+    sellTail = nullptr;
+    transactionTail = nullptr;
     buySize = 0;
     sellSize = 0;
     transactionSize = 0;

@@ -7,6 +7,8 @@ Order::Order(int id, char type, float price, int timestamp) {
     this->timestamp = timestamp;
 }
 
+//Destrutor
+//libera recursos quando o objeto é destruído
 Order::~Order(){}
 
 int Order::getId() {
@@ -22,6 +24,17 @@ int Order::getTimestamp() {
     return timestamp; 
 }
 
+//Copy Constructor
+//copia os atributos quando o objeto ainda não existe
 Order::Order(const Order& other): id(other.id), type(other.type), price(other.price), timestamp(other.timestamp) {}
 
-Order& Order::operator=(const Order& other) {}
+//Copy Assignment Operator
+//copia os atributos entre objetos já existentes
+Order& Order::operator=(const Order& other) {
+    this->id = other.id;
+    this->type = other.type;
+    this->price = other.price;
+    this->timestamp = other.timestamp;
+    return *this;
+}
+
