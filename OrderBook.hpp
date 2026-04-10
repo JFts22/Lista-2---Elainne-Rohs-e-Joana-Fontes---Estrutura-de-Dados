@@ -21,6 +21,16 @@ private:
     // Estruturas internas escolhidas pelos alunos
     // para armazenar ordens de compra, venda e transações
 
+    // Funções auxiiares para os métodos desta classe
+    // inserção
+    void insertBuyNode(OrderNode* node);
+    void insertSellNode(OrderNode* node);
+    void insertTransactionNode(TransactionNode* node);
+    // remoção
+    void removeBuyNode(OrderNode* node);
+    void removeSellNode(OrderNode* node);
+    void removeTransactionNode(TransactionNode* node);
+
     // Funções auxiliares para o Copy constructor e o Copy Assignment Operator
     void copyBuyList(const OrderBook& other);
     void copySellList(const OrderBook& other);

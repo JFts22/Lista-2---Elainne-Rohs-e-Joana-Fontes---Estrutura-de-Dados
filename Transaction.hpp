@@ -9,7 +9,9 @@ private:
     float execution_price;
 
 public:
-
+    // Construtor sem parâmetros (default constructor)
+    Transaction();
+    // Construtor com parâmetros, sobrescrevendo (overriding) construtores
     Transaction(int buy_order_id, int sell_order_id, float execution_price);
     ~Transaction();
 
@@ -21,7 +23,7 @@ public:
     // Copy Constructor, usado na criação de um objeto a partir de outro
     Transaction(const Transaction& other);
     // Copy Assignment Operator, usado para copiar valores entre instências já existentes
-    Transaction operator=(const Transaction& other);
+    Transaction& operator=(const Transaction& other);
 };
 
 

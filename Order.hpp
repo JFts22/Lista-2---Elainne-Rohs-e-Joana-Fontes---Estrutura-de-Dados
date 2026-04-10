@@ -10,8 +10,11 @@ private:
     int timestamp;
 
 public:
-
+    // Construtor sem parâmetros (default constructor)
+    Order();
+    // Construtor com parâmetros, sobrescrevendo (overriding) construtores
     Order(int id, char type, float price, int timestamp);
+
     ~Order();
 
     int getId();

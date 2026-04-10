@@ -1,27 +1,33 @@
 #include "Order.hpp"
-
+// Construtor com parâmetros
 Order::Order(int id, char type, float price, int timestamp) {
     this->id = id;
     this->type = type;
     this->price = price;
     this->timestamp = timestamp;
 }
-
+// Construtor sem parâmetros (default constructor)
+Order::Order() {
+    id = 0;
+    type = '\0';
+    price=0.0;
+    timestamp = 0;
+}
 //Destrutor
 //libera recursos quando o objeto é destruído
 Order::~Order(){}
 
 int Order::getId() {
-    return id;
+    return this->id;
 }
 char Order::getType() { 
-    return type; 
+    return this->type; 
 }
 float Order::getPrice() { 
-    return price; 
+    return this->price; 
 }
 int Order::getTimestamp() {
-    return timestamp; 
+    return this->timestamp; 
 }
 
 //Copy Constructor

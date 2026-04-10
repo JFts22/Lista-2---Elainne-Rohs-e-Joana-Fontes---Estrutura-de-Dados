@@ -4,218 +4,47 @@
 #include "OrderNode.hpp"
 #include "TransactionNode.hpp"
 
-//SUBMIT
-bool OrderBook::submit(Order order) {
-    if(order.getType() == 'B') {
-        //verifica se o preço da compra é maior ou igual ao de venda
-        if(sellHead != nullptr && sellHead->order.getPrice() <= order.getPrice()) {
-            Transaction t(order.getId(), sellHead->order.getId(), sellHead->order.getPrice()); //cria transacao
-            TransactionNode* no = new TransactionNode(t); //criando um novo nó para a lista
-            if(transactionHead == nullptr) {
-                // lista vazia
-                transactionHead = no;
-                transactionTail = no;
-            } else {
-                // lista não vazia
-                transactionTail->next = no;
-                transactionTail = no;
-            }
-            transactionSize++;
-            // salvar o nó pra deletar depois
-            OrderNode* temp = sellHead;
-            if(sellHead == sellTail) {
-                // único elemento
-                sellHead = nullptr;
-                sellTail = nullptr;
-            } else {
-                // mais elementos
-                sellHead = sellHead->next;
-                sellHead->prev = nullptr;
-            }
-            delete temp;
-            sellSize--;
-            return true;
-        } else {
-            // se nao achar ordem compatível
-            OrderNode* newNode = new OrderNode(order);
-            OrderNode* current = buyHead;
-            while(current != nullptr && current->order.getPrice() > order.getPrice()) {
-                current = current->next;
-            }
-            if(buyHead == nullptr) {
-                // lista vazia
-                buyHead = newNode;
-                buyTail = newNode;
-            } else if(current == buyHead) {
-                // inserir no início
-                newNode->next = buyHead;
-                buyHead->prev = newNode;
-                buyHead = newNode;
-            } else if(current == nullptr) {
-                // inserir no final
-                newNode->prev = buyTail;
-                buyTail->next = newNode;
-                buyTail = newNode;
-            } else {
-                // inserir no meio
-                newNode->prev = current->prev;
-                newNode->next = current;
-                current->prev->next = newNode;
-                current->prev = newNode;
-            }
-            buySize++;
-            return false;
-        }
-    }
-}
-
-//CANCEL
-bool OrderBook::cancel(int id) {
-    // procura na lista de compras
-    OrderNode* current = buyHead;
-    while(current != nullptr && current->order.getId() != id) {
-        current = current->next;
-    }
-    if(current != nullptr) { 
-        if(current == buyHead) { //remover primeiro nó
-            buyHead = current->next;
-            if(buyHead != nullptr) {
-                buyHead->prev = nullptr;
-            }
-        } else if(current == buyTail) { //remover último nó
-            buyTail = current->prev;
-            if(buyTail != nullptr) {
-                buyTail->next = nullptr;
-            }
-        } else { //remover nó no meio
-            current->prev->next = current->next;
-            current->next->prev = current->prev;
-        }
-        delete current;
-        buySize--;
-        return true;
-    }
-    // procura na lista de vendas
-    //remoção igual à de compras
-    current = sellHead;
-    while(current != nullptr && current->order.getId() != id) {
-        current = current->next;
-    }
-    if(current != nullptr) {
-        if(current == sellHead) {
-            sellHead = current->next;
-            if(sellHead != nullptr) {
-                sellHead->prev = nullptr;
-            }
-        } else if(current == sellTail) {
-            sellTail = current->prev;
-            if(sellTail != nullptr) {
-                sellTail->next = nullptr;
-            }
-        } else {
-            current->prev->next = current->next;
-            current->next->prev = current->prev;
-        }
-        delete current;
-        sellSize--;
-        return true;
-    }
-    return false;
-}
-
-//Get
-Order* getBuyOrders(int* n) {
-    if(buyHead == nullptr) { //se a lista for vazia
-        *n = 0;
-        return nullptr;
-    }
-    *n = buySize; //ponteiro do tamanho de buySize
-    Order* arr = new Order[buySize];
-    OrderNode* current = buyHead;
-    int i = 0;
-    while(current != nullptr) { //percorre a lista
-        arr[i] = current->order;
-        i++;
-        current = current->next;
-    }
-    return arr;
-}
-    
-Order* getSellOrders(int* n){
-    if(sellHead == nullptr){
-        *n = 0;
-        return nullprt;
-    }    
-    *n = sellSize;
-    Order* arr = new Order[sellSize];
-    OrderNode* current = sellHead;
-    int i=0;
-
-    while(current != nullptr) { 
-        arr[i] = current->order;
-        i++;
-        current = current->next;
-    }
-    return arr;
-}
-
-Transaction* getTransactions(int* n){
-    if(transactionHead == nullptr){
-        *n = 0;
-        return nullprt;
-    }    
-    *n = transactionSize;
-    Transaction* arr = new Transaction[transactionSize];
-    TransactionNode* current = transactionHead;
-    int i=0;
-
-    while(current != nullptr) { 
-        arr[i] = current->transaction;
-        i++;
-        current = current->next;
-    }
-    return arr;
-}
+#include <iostream>
 
 //Metodos
 void OrderBook::printBuyOrders(){
-    cout << "---- BuyOrders: ----" << endl;
-    if(buyHead == nullprt){
-        cout << "empty!!!" << endl;
+    std::cout << "---- BuyOrders: ----" << std::endl;
+    if(buyHead == nullptr){
+        std::cout << "empty!!!" << std::endl;
         return;
     }
 
     OrderNode* current = buyHead;
-    while (current != nullprt){
-        cout << "[" << current -> order.getId() << " | " << current-> order.getPrice() << " | " << current -> order.getTimestamp() << "]" << endl;
+    while (current != nullptr){
+        std::cout << "[" << current -> order.getId() << " | " << current-> order.getPrice() << " | " << current -> order.getTimestamp() << "]" << std::endl;
         current = current->next;
     }
 }
 
 void OrderBook::printSellOrders(){
-    cout << "---- SellOrders: ----" << endl;
-    if(sellHead == nullprt){
-        cout << "empty!!!" << endl;
+    std::cout << "---- SellOrders: ----" << std::endl;
+    if(sellHead == nullptr){
+        std::cout << "empty!!!" << std::endl;
         return;
     }
 
     OrderNode* current = sellHead;
-    while (current != nullprt){
-        cout << "[" << current -> order.getId() << " | " << current-> order.getPrice() << " | " << current -> order.getTimestamp() << "]" << endl;
+    while (current != nullptr){
+        std::cout << "[" << current -> order.getId() << " | " << current-> order.getPrice() << " | " << current -> order.getTimestamp() << "]" << std::endl;
         current = current->next;
     }
 }
 
 void OrderBook::printTransactions(){
-    cout << "---- Transactions: ----" << endl;
-    if(transactionHead == nullprt){
-        cout << "empty!!!" << endl;
+    std::cout << "---- Transactions: ----" << std::endl;
+    if(transactionHead == nullptr){
+        std::cout << "empty!!!" << std::endl;
         return;
     }
 
     TransactionNode* current = transactionHead;
-    while (current != nullprt){
-        cout << "[" << current -> transaction.getBuyOrderId() << " , " << current-> transaction.getSellOrderId() << " , " << current -> transaction.getExecutionPrice() << "]" << endl;
+    while (current != nullptr){
+        std::cout << "[" << current -> transaction.getBuyOrderId() << " , " << current-> transaction.getSellOrderId() << " , " << current -> transaction.getExecutionPrice() << "]" << std::endl;
         current = current->next;
     }
 }
