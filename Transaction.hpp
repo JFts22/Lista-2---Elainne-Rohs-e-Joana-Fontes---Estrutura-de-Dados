@@ -22,7 +22,7 @@ public:
     /// Seguindo a RULE OF THREE, (como no trabalho 1) destrutor já foi declarado
     // Copy Constructor, usado na criação de um objeto a partir de outro
     Transaction(const Transaction& other);
-    // Copy Assignment Operator, usado para copiar valores entre instências já existentes
+    // Copy Assignment Operator, usado para copiar valores entre instâncias já existentes
     Transaction& operator=(const Transaction& other);
 };
 

@@ -175,8 +175,17 @@ void OrderBook::removeTransactionNode(TransactionNode* node) {
 bool OrderBook::submit(Order order) {
     // caso BUY: busca a sell order mais barata, que esteja em seu orçamento.
     if(order.getType() == 'B') {
-        //verifica se o preço da compra é maior ou igual ao de venda
         OrderNode* best = nullptr;
+        OrderNode* curr = sellHead;
+        //Percorre a lista encadeda das ordens de venda disponíveis e 
+        //verifica se o preço da compra é maior ou igual ao de venda
+
+        while(curr) {
+            if(curr->order.getPrice() <= order.getPrice()) {
+                best = curr;
+            }
+        }
+
         if(sellHead != nullptr && sellHead->order.getPrice() <= order.getPrice()) {
             Transaction t(order.getId(), sellHead->order.getId(), sellHead->order.getPrice()); //cria transacao
             TransactionNode* no = new TransactionNode(t); //criando um novo nó para a lista
@@ -290,6 +299,48 @@ bool OrderBook::cancel(int id) {
         return true;
     }
     return false;
+}
+
+void OrderBook::printBuyOrders(){
+    std::cout << "---- BuyOrders: ----" << std::endl;
+    if(buyHead == nullptr){
+        std::cout << "empty!!!" << std::endl;
+        return;
+    }
+
+    OrderNode* current = buyHead;
+    while (current != nullptr){
+        std::cout << "[" << current -> order.getId() << " | " << current-> order.getPrice() << " | " << current -> order.getTimestamp() << "]" << std::endl;
+        current = current->next;
+    }
+}
+
+void OrderBook::printSellOrders(){
+    std::cout << "---- SellOrders: ----" << std::endl;
+    if(sellHead == nullptr){
+        std::cout << "empty!!!" << std::endl;
+        return;
+    }
+
+    OrderNode* current = sellHead;
+    while (current != nullptr){
+        std::cout << "[" << current -> order.getId() << " | " << current-> order.getPrice() << " | " << current -> order.getTimestamp() << "]" << std::endl;
+        current = current->next;
+    }
+}
+
+void OrderBook::printTransactions(){
+    std::cout << "---- Transactions: ----" << std::endl;
+    if(transactionHead == nullptr){
+        std::cout << "empty!!!" << std::endl;
+        return;
+    }
+
+    TransactionNode* current = transactionHead;
+    while (current != nullptr){
+        std::cout << "[" << current -> transaction.getBuyOrderId() << " , " << current-> transaction.getSellOrderId() << " , " << current -> transaction.getExecutionPrice() << "]" << std::endl;
+        current = current->next;
+    }
 }
 
 /// Funções Auxiliares para Copy Constructor e Copy Assignment Operator
