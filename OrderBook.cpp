@@ -122,51 +122,54 @@ void OrderBook::insertTransactionNode(TransactionNode* node) {
 
 // REMOÇÃO AUXILIAR
 void OrderBook::removeBuyNode(OrderNode* node) {
-    if(node->prev) {
+    if(node == nullptr)
+        return;
+    // Se não for o primeiro nó
+    if(node->prev != nullptr) {
         node->prev->next = node->next;
     }
     else {
         buyHead = node->next;
     }
-    if(node->next) {
+    // Se não for o último nó
+    if(node->next != nullptr) {
         node->next->prev = node->prev;
     }
     else {
         buyTail = node->prev;
     }
-    delete[] node;
+
+    delete node;
     buySize--;
 }
 void OrderBook::removeSellNode(OrderNode* node) {
-    if(node->prev) {
+    if(node == nullptr)
+        return;
+    if(node->prev != nullptr) {
         node->prev->next = node->next;
     }
-    else {
-        sellHead = node->next;
+    else {sellHead = node->next;}
+    if(node->next != nullptr) {
+        node->next->prev = node->prev;
     }
-    if(node->next) {
-        node->prev->next = node->prev;
-    }
-    else {
-        sellTail = node->prev;
-    }
-    delete[] node;
+    else {sellTail = node->prev;}
+
+    delete node;
     sellSize--;
 }
 void OrderBook::removeTransactionNode(TransactionNode* node) {
-    if(node->prev) {
+    if(node == nullptr)
+        return;
+    if(node->prev != nullptr) {
         node->prev->next = node->next;
     }
-    else {
-        transactionHead = node->next;
+    else {transactionHead = node->next;}
+    if(node->next != nullptr) {
+        node->next->prev = node->prev;
     }
-    if(node->next) {
-        node->prev->next = node->prev;
-    }
-    else {
-        transactionTail = node->prev;
-    }
-    delete[] node;
+    else {transactionTail = node->prev;}
+
+    delete node;
     transactionSize--;
 }
 int OrderBook::greaterTimeStamp() {
@@ -189,8 +192,8 @@ int OrderBook::greaterTimeStamp() {
     if(time_b>=time_s) {
         return time_b; 
     }
-    delete[] curr_b;
-    delete[] curr_s;
+    delete curr_b;
+    delete curr_s;
     return time_s;
 }
 
@@ -212,7 +215,7 @@ bool OrderBook::submit(Order order) {
             }
             curr = curr->next;
         }
-        delete[] curr;
+        delete curr;
 
         if(sellHead != nullptr && sellHead->order.getPrice() <= order.getPrice()) {
             Transaction t(order.getId(), best->order.getId(), best->order.getPrice()); //cria transacao dada a verificação que existe a possibilidade
@@ -225,7 +228,7 @@ bool OrderBook::submit(Order order) {
             // se não achar ordem compatível
             OrderNode* newNode = new OrderNode(order);
             insertBuyNode(newNode);
-            delete[] best;
+            delete best;
             return false;
         }
         return false;
@@ -246,7 +249,7 @@ bool OrderBook::submit(Order order) {
             }
             curr = curr->next;
         }
-        delete[] curr;
+        delete curr;
 
         if(buyHead != nullptr && buyHead->order.getPrice() >= order.getPrice()) {
             Transaction t(order.getId(), best->order.getId(), best->order.getPrice()); //cria transacao dada a verificação que existe a possibilidade
@@ -259,7 +262,7 @@ bool OrderBook::submit(Order order) {
             // se não achar ordem compatível
             OrderNode* newNode = new OrderNode(order);
             insertSellNode(newNode);
-            delete[] best;
+            delete best;
             return false;
         }
     }
@@ -287,7 +290,7 @@ bool OrderBook::cancel(int id) {
         removeSellNode(current);
         return true;
     }
-    delete[] current;
+    delete current;
 
     // procura na lista de transições
     TransactionNode* current_t = transactionHead;

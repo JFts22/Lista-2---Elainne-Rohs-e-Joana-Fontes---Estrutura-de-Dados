@@ -74,6 +74,7 @@
 
 //Implementação da Simulação
 int main() { 
+    std::cout << "inicio" << std::endl;
     OrderBook bookSim;
 
     int *n_buyOrders;
@@ -109,5 +110,6 @@ int main() {
     bookSim.printSellOrders();
     bookSim.printTransactions();
 
+    std::cout << "fim" << std::endl;
     return 0;
 }
