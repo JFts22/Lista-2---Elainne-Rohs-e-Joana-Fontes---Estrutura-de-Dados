@@ -18,7 +18,7 @@ Há 3 estruturas compostas de dados (classes) criados disponibilizados na main:
 Há 4 tipos de operações disponibilizadas:
 
 * ```submit```: usada para executar a criação de uma ordem. Parâmetro: objeto da classe ```Order```
-* ```cancel```: usada para cancelar uma ordem ou uma transação através do **id** buscado. No caso de ser uma transação, ao ser desfeita, as duas ordens envolvidas voltam a ser tratadas pelo sistema como ordens sem execução. No entanto, o preço de cada uma (compra e venda) agora será o preço decidido na transação, que era o de uma das ordens, e o timestamp é o da realização do cancelamento. Parâmetro: id inteiro.
+* ```cancel```: usada para cancelar uma ordem com ou sem execução através do **id** buscado. No caso de ser uma ordem de uma transação, apenas a outra ordem envolvida volta a ser tratada pelo sistema como ordem sem execução; a transação e a ordem do id buscado são removidas. No entanto, o preço desta (seja de compra ou venda) agora será o preço decidido na transação, que era o de uma das ordens, e o timestamp é o da realização do cancelamento. Parâmetro: id inteiro.
 * Verificar a quantidade de ordens de compra sem execução ou a de ordens de venda (sem execução também) ou a de transações. Existe uma função para cada uma das 3 possíveis quantidades. Parâmetro: ponteiro inteiro que será modificado retornando uma delas.
 * Exibir a grade de ordens de compra sem execução ou a de ordens de venda (sem execução também) ou a de transações, mostrando os id's, timestamps (exceto para a grade de transações) e preços. Existe uma função para cada uma dos três tipos de grades. 
 
