@@ -263,6 +263,7 @@ bool OrderBook::submit(Order order) {
             return false;
         }
     }
+    return false;
 }
 
 //CANCEL
@@ -322,6 +323,7 @@ void OrderBook::printBuyOrders(){
         std::cout << "[" << current -> order.getId() << " | " << current-> order.getPrice() << " | " << current -> order.getTimestamp() << "]" << std::endl;
         current = current->next;
     }
+    return;
 }
 
 void OrderBook::printSellOrders(){
@@ -336,6 +338,7 @@ void OrderBook::printSellOrders(){
         std::cout << "[" << current -> order.getId() << " | " << current-> order.getPrice() << " | " << current -> order.getTimestamp() << "]" << std::endl;
         current = current->next;
     }
+    return;
 }
 
 void OrderBook::printTransactions(){
@@ -350,6 +353,7 @@ void OrderBook::printTransactions(){
         std::cout << "[" << current -> transaction.getBuyOrderId() << " , " << current-> transaction.getSellOrderId() << " , " << current -> transaction.getExecutionPrice() << "]" << std::endl;
         current = current->next;
     }
+    return;
 }
 
 /// Funções Auxiliares para Copy Constructor e Copy Assignment Operator
@@ -378,6 +382,7 @@ void OrderBook::clear() {
     transactionHead = transactionTail = nullptr;
 
     buySize = sellSize = transactionSize = 0;
+    return;
 }
 
 void OrderBook::copyBuyList(const OrderBook& other) {
@@ -401,6 +406,7 @@ void OrderBook::copyBuyList(const OrderBook& other) {
     }
 
     buySize = other.buySize;
+    return;
 }
 
 void OrderBook::copySellList(const OrderBook& other) {
@@ -424,6 +430,7 @@ void OrderBook::copySellList(const OrderBook& other) {
     }
 
     sellSize = other.sellSize;
+    return;
 }
 
 void OrderBook::copyTransactionList(const OrderBook& other) {
@@ -448,6 +455,7 @@ void OrderBook::copyTransactionList(const OrderBook& other) {
     }
 
     transactionSize = other.transactionSize;
+    return;
 }
 
 /// Copy Constructor
