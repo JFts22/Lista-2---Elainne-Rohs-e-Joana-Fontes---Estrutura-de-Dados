@@ -303,11 +303,13 @@ bool OrderBook::cancel(int id) {
             Order buy(id_buy, 'B', price, timestamp);
             OrderNode* newNodeB = new OrderNode(buy);
             insertBuyNode(newNodeB);
+            submit(buy);
         }
         else {
             Order sell(id_sell, 'S', price, timestamp);
             OrderNode* newNodeS = new OrderNode(sell);
             insertSellNode(newNodeS);
+            submit(sell);
         }
         removeTransactionNode(current_t);
         return true;
