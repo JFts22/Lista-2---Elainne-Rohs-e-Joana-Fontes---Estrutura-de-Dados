@@ -293,18 +293,22 @@ bool OrderBook::cancel(int id) {
     TransactionNode* current_t = transactionHead;
     int timestamp = greaterTimeStamp();
     while(current_t != nullptr && current_t->transaction.getBuyOrderId() != id && current_t->transaction.getSellOrderId() != id) {
-        current_t = current_t->next;       
+        current_t = current_t->next;
     }
     if(current_t != nullptr) {
         int id_buy = current_t->transaction.getBuyOrderId();
         int id_sell = current_t->transaction.getSellOrderId();
-        float price = current_t->transaction.getExecutionPrice(); 
-        Order buy(id_buy, 'B', price, timestamp);
-        OrderNode* newNodeB = new OrderNode(buy);
-        Order sell(id_sell, 'S', price, timestamp);
-        OrderNode* newNodeS = new OrderNode(sell);
-        insertBuyNode(newNodeB);
-        insertSellNode(newNodeS);
+        float price = current_t->transaction.getExecutionPrice();
+        if(id_buy == id) {
+            Order buy(id_buy, 'B', price, timestamp);
+            OrderNode* newNodeB = new OrderNode(buy);
+            insertBuyNode(newNodeB);
+        }
+        else {
+            Order sell(id_sell, 'S', price, timestamp);
+            OrderNode* newNodeS = new OrderNode(sell);
+            insertSellNode(newNodeS);
+        }
         removeTransactionNode(current_t);
         return true;
     }
