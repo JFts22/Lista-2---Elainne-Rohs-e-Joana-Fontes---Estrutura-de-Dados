@@ -3,19 +3,17 @@
 #include "Transaction.hpp"
 #include "OrderNode.hpp"
 #include "TransactionNode.hpp"
-
 #include <iostream>
 
-//Implementação da Simulação
 int main() { 
-
     OrderBook bookSim;
+    int n_buyOrders;
+    int n_sellOrders;
+    int n_transactions;
 
-    int *n_buyOrders;
-    int *n_sellOrders;
-    int *n_transactions;
-
-    // Gerando submits aleatórios
+    // TESTE DE INSERCAO E EXECUCAO
+    std::cout << "=== TESTE DE INSERCAO E EXECUCAO ===" << std::endl;
+    std::cout << "Inserindo ordens de compra e venda..." << std::endl;
     bookSim.submit(Order(1, 'S', 3, 1));
     bookSim.submit(Order(2, 'S', 9, 2));
     bookSim.submit(Order(3, 'S', 10, 3));
@@ -27,37 +25,46 @@ int main() {
     bookSim.submit(Order(9, 'S', 9, 9));
     bookSim.submit(Order(10, 'B', 6, 10));
 
-    Transaction* arr = bookSim.getTransactions(n_transactions);
+    //TESTE DOS METODOS GET
+    std::cout << "=== TESTE DOS METODOS GET ===" << std::endl;
+    Transaction* arr = bookSim.getTransactions(&n_transactions);
+    std::cout << "Transacoes realizadas: " << n_transactions << std::endl;
     delete[] arr;
-    std::cout << "Foi detectada a realizacao de ordens e transacoes massiva" << std::endl;
-    std::cout << "Realizadas " << *n_transactions << " no total" << std::endl;
 
-    std::cout << "***********************" << std::endl;
+    Order* buyArr = bookSim.getBuyOrders(&n_buyOrders);
+    std::cout << "Ordens de compra em aberto: " << n_buyOrders << std::endl;
+    delete[] buyArr;
+
+    Order* sellArr = bookSim.getSellOrders(&n_sellOrders);
+    std::cout << "Ordens de venda em aberto: " << n_sellOrders << std::endl;
+    delete[] sellArr;
+
+    //ESTADO DO SISTEMA
+    std::cout << "=== ESTADO DO SISTEMA ===" << std::endl;
     bookSim.printBuyOrders();
     bookSim.printSellOrders();
     bookSim.printTransactions();
-    std::cout << "***********************" << std::endl;
 
-    std::cout << "Serao realizadas tentativas de cancelamentos" << std::endl;
-    bool cancel1;
-    bool cancel2;
-    cancel1 = bookSim.cancel(1);
-    cancel2 = bookSim.cancel(100);
-    std::cout << "_______________________" << std::endl;
-    if(cancel2) {
+    //TESTE DE CANCELAMENTO
+    std::cout << "=== TESTE DE CANCELAMENTO ===" << std::endl;
+    std::cout << "Cancelando ordem existente (id=1)..." << std::endl;
+    bool cancel1 = bookSim.cancel(1);
+    if(cancel1) {
         std::cout << "Cancelamento confirmado" << std::endl;
-    }
-    else {
-        std::cout << "Nao foi encontrado esse id" << std::endl;
-    }
-    if(cancel2) {
-        std::cout << "Cancelamento confirmado" << std::endl;
-    }
-    else {
+    } else {
         std::cout << "Nao foi encontrado esse id" << std::endl;
     }
 
-    std::cout << "***********************" << std::endl;
+    std::cout << "Cancelando ordem inexistente (id=100)..." << std::endl;
+    bool cancel2 = bookSim.cancel(100);
+    if(cancel2) {
+        std::cout << "Cancelamento confirmado" << std::endl;
+    } else {
+        std::cout << "Nao foi encontrado esse id" << std::endl;
+    }
+
+    //ESTADO FINAL DO SISTEMA
+    std::cout << "=== ESTADO FINAL DO SISTEMA ===" << std::endl;
     bookSim.printBuyOrders();
     bookSim.printSellOrders();
     bookSim.printTransactions();
