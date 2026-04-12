@@ -228,6 +228,7 @@ bool OrderBook::submit(Order order) {
             delete[] best;
             return false;
         }
+        return false;
     }
 
     // caso SELL: busca a buy order mais cara, que esteja em seu orçamento.

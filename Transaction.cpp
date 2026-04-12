@@ -28,4 +28,5 @@ Transaction& Transaction::operator=(const Transaction& other) {
     this->buy_order_id = other.buy_order_id;
     this->sell_order_id = other.sell_order_id;
     this->execution_price = other.execution_price;
+    return *this;
 }
