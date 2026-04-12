@@ -38,9 +38,24 @@ int main() {
     bookSim.printTransactions();
     std::cout << "***********************" << std::endl;
 
-    std::cout << "Serao realizados cancelamentos" << std::endl;
-    bookSim.cancel(1);
-    bookSim.cancel(7);
+    std::cout << "Serao realizadas tentativas de cancelamentos" << std::endl;
+    bool cancel1;
+    bool cancel2;
+    cancel1 = bookSim.cancel(1);
+    cancel2 = bookSim.cancel(100);
+    std::cout << "_______________________" << std::endl;
+    if(cancel2) {
+        std::cout << "Cancelamento confirmado" << std::endl;
+    }
+    else {
+        std::cout << "Nao foi encontrado esse id" << std::endl;
+    }
+    if(cancel2) {
+        std::cout << "Cancelamento confirmado" << std::endl;
+    }
+    else {
+        std::cout << "Nao foi encontrado esse id" << std::endl;
+    }
 
     std::cout << "***********************" << std::endl;
     bookSim.printBuyOrders();

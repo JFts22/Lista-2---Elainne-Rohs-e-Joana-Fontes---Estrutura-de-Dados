@@ -280,12 +280,12 @@ bool OrderBook::cancel(int id) {
     }
     // procura na lista de vendas
     //remoção igual à de compras
-    current = sellHead;
-    while(current != nullptr && current->order.getId() != id) {
-        current = current->next;
+    OrderNode* current_s = sellHead;
+    while(current_s != nullptr && current_s->order.getId() != id) {
+        current_s = current_s->next;
     }
-    if(current != nullptr) {
-        removeSellNode(current);
+    if(current_s != nullptr) {
+        removeSellNode(current_s);
         return true;
     }
 
