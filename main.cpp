@@ -74,7 +74,7 @@
 
 //Implementação da Simulação
 int main() { 
-    std::cout << "inicio" << std::endl;
+
     OrderBook bookSim;
 
     int *n_buyOrders;
@@ -95,21 +95,23 @@ int main() {
 
     Transaction* arr = bookSim.getTransactions(n_transactions);
     delete[] arr;
-    std::cout << "Foi detectada a realização de transações massiva" << std::endl;
-    std::cout << "Realizadas" << n_transactions << "no total" << std::endl;
+    std::cout << "Foi detectada a realizacao de ordens e transacoes massiva" << std::endl;
+    std::cout << "Realizadas " << *n_transactions << " no total" << std::endl;
 
+    std::cout << "***********************" << std::endl;
     bookSim.printBuyOrders();
     bookSim.printSellOrders();
     bookSim.printTransactions();
+    std::cout << "***********************" << std::endl;
 
-    std::cout << "Serão realizados cancelamentos" << std::endl;
+    std::cout << "Serao realizados cancelamentos" << std::endl;
     bookSim.cancel(1);
     bookSim.cancel(7);
 
+    std::cout << "***********************" << std::endl;
     bookSim.printBuyOrders();
     bookSim.printSellOrders();
     bookSim.printTransactions();
 
-    std::cout << "fim" << std::endl;
     return 0;
 }

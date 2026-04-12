@@ -96,6 +96,7 @@ void OrderBook::insertBuyNode(OrderNode* node) {
         buyTail = node;
     }
     buySize++;
+    return;
 }
 void OrderBook::insertSellNode(OrderNode* node) {
     if(sellHead == nullptr){
@@ -107,6 +108,7 @@ void OrderBook::insertSellNode(OrderNode* node) {
         sellTail = node;
     }
     sellSize++;
+    return;
 }
 void OrderBook::insertTransactionNode(TransactionNode* node) {
     if(transactionHead == nullptr){
@@ -118,6 +120,7 @@ void OrderBook::insertTransactionNode(TransactionNode* node) {
         transactionTail = node;
     }
     transactionSize++;
+    return;
 }
 
 // REMOÇÃO AUXILIAR
@@ -139,8 +142,8 @@ void OrderBook::removeBuyNode(OrderNode* node) {
         buyTail = node->prev;
     }
 
-    delete node;
     buySize--;
+    return;
 }
 void OrderBook::removeSellNode(OrderNode* node) {
     if(node == nullptr)
@@ -154,8 +157,8 @@ void OrderBook::removeSellNode(OrderNode* node) {
     }
     else {sellTail = node->prev;}
 
-    delete node;
     sellSize--;
+    return;
 }
 void OrderBook::removeTransactionNode(TransactionNode* node) {
     if(node == nullptr)
@@ -169,8 +172,8 @@ void OrderBook::removeTransactionNode(TransactionNode* node) {
     }
     else {transactionTail = node->prev;}
 
-    delete node;
     transactionSize--;
+    return;
 }
 int OrderBook::greaterTimeStamp() {
     OrderNode* curr_b = buyHead;
@@ -192,8 +195,7 @@ int OrderBook::greaterTimeStamp() {
     if(time_b>=time_s) {
         return time_b; 
     }
-    delete curr_b;
-    delete curr_s;
+    
     return time_s;
 }
 
@@ -215,9 +217,8 @@ bool OrderBook::submit(Order order) {
             }
             curr = curr->next;
         }
-        delete curr;
 
-        if(sellHead != nullptr && sellHead->order.getPrice() <= order.getPrice()) {
+        if(best != nullptr && best->order.getPrice() <= order.getPrice()) {
             Transaction t(order.getId(), best->order.getId(), best->order.getPrice()); //cria transacao dada a verificação que existe a possibilidade
             TransactionNode* newNode = new TransactionNode(t); //criando um novo nó para a lista
             insertTransactionNode(newNode);
@@ -228,7 +229,6 @@ bool OrderBook::submit(Order order) {
             // se não achar ordem compatível
             OrderNode* newNode = new OrderNode(order);
             insertBuyNode(newNode);
-            delete best;
             return false;
         }
         return false;
@@ -249,9 +249,8 @@ bool OrderBook::submit(Order order) {
             }
             curr = curr->next;
         }
-        delete curr;
 
-        if(buyHead != nullptr && buyHead->order.getPrice() >= order.getPrice()) {
+        if(best != nullptr && best->order.getPrice() >= order.getPrice()) {
             Transaction t(order.getId(), best->order.getId(), best->order.getPrice()); //cria transacao dada a verificação que existe a possibilidade
             TransactionNode* newNode = new TransactionNode(t); //criando um novo nó para a lista
             insertTransactionNode(newNode);
@@ -262,7 +261,6 @@ bool OrderBook::submit(Order order) {
             // se não achar ordem compatível
             OrderNode* newNode = new OrderNode(order);
             insertSellNode(newNode);
-            delete best;
             return false;
         }
     }
@@ -290,18 +288,17 @@ bool OrderBook::cancel(int id) {
         removeSellNode(current);
         return true;
     }
-    delete current;
 
     // procura na lista de transições
     TransactionNode* current_t = transactionHead;
-    int id_buy = current_t->transaction.getBuyOrderId();
-    int id_sell = current_t->transaction.getSellOrderId();
-    float price = current_t->transaction.getExecutionPrice();
     int timestamp = greaterTimeStamp();
-    while(current_t != nullptr && id_buy != id && id_sell != id) {
-        current_t = current_t->next;
+    while(current_t != nullptr && current_t->transaction.getBuyOrderId() != id && current_t->transaction.getSellOrderId() != id) {
+        current_t = current_t->next;       
     }
     if(current_t != nullptr) {
+        int id_buy = current_t->transaction.getBuyOrderId();
+        int id_sell = current_t->transaction.getSellOrderId();
+        float price = current_t->transaction.getExecutionPrice(); 
         Order buy(id_buy, 'B', price, timestamp);
         OrderNode* newNodeB = new OrderNode(buy);
         Order sell(id_sell, 'S', price, timestamp);
@@ -353,7 +350,7 @@ void OrderBook::printTransactions(){
 
     TransactionNode* current = transactionHead;
     while (current != nullptr){
-        std::cout << "[" << current -> transaction.getBuyOrderId() << " , " << current-> transaction.getSellOrderId() << " , " << current -> transaction.getExecutionPrice() << "]" << std::endl;
+        std::cout << "[" << current -> transaction.getBuyOrderId() << " | " << current-> transaction.getSellOrderId() << " | " << current -> transaction.getExecutionPrice() << "]" << std::endl;
         current = current->next;
     }
     return;
