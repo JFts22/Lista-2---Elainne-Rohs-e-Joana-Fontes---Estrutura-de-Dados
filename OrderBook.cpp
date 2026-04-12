@@ -222,7 +222,6 @@ bool OrderBook::submit(Order order) {
             Transaction t(order.getId(), best->order.getId(), best->order.getPrice()); //cria transacao dada a verificação que existe a possibilidade
             TransactionNode* newNode = new TransactionNode(t); //criando um novo nó para a lista
             insertTransactionNode(newNode);
-            removeSellNode(best);
             return true;
         } 
         else {
@@ -231,6 +230,7 @@ bool OrderBook::submit(Order order) {
             insertBuyNode(newNode);
             return false;
         }
+        removeSellNode(best);
         return false;
     }
 
