@@ -72,60 +72,6 @@
 //     }
 // }
 
-// //CANCEL
-// bool OrderBook::cancel(int id) {
-//     // procura na lista de compras
-//     OrderNode* current = buyHead;
-//     while(current != nullptr && current->order.getId() != id) {
-//         current = current->next;
-//     }
-//     if(current != nullptr) { 
-//         if(current == buyHead) { //remover primeiro nó
-//             buyHead = current->next;
-//             if(buyHead != nullptr) {
-//                 buyHead->prev = nullptr;
-//             }
-//         } else if(current == buyTail) { //remover último nó
-//             buyTail = current->prev;
-//             if(buyTail != nullptr) {
-//                 buyTail->next = nullptr;
-//             }
-//         } else { //remover nó no meio
-//             current->prev->next = current->next;
-//             current->next->prev = current->prev;
-//         }
-//         delete current;
-//         buySize--;
-//         return true;
-//     }
-//     // procura na lista de vendas
-//     //remoção igual à de compras
-//     current = sellHead;
-//     while(current != nullptr && current->order.getId() != id) {
-//         current = current->next;
-//     }
-//     if(current != nullptr) {
-//         if(current == sellHead) {
-//             sellHead = current->next;
-//             if(sellHead != nullptr) {
-//                 sellHead->prev = nullptr;
-//             }
-//         } else if(current == sellTail) {
-//             sellTail = current->prev;
-//             if(sellTail != nullptr) {
-//                 sellTail->next = nullptr;
-//             }
-//         } else {
-//             current->prev->next = current->next;
-//             current->next->prev = current->prev;
-//         }
-//         delete current;
-//         sellSize--;
-//         return true;
-//     }
-//     return false;
-// }
-
 //Implementação da Simulação
 int main() { 
     OrderBook bookSim;
@@ -135,18 +81,29 @@ int main() {
     int *n_transactions;
 
     // Gerando submits aleatórios
-    bookSim.submit(Order(1, 'B', 3, 1));
+    bookSim.submit(Order(1, 'S', 3, 1));
     bookSim.submit(Order(2, 'S', 9, 2));
-    for(int idtime_gen = 3; idtime_gen < 6; idtime_gen++) {
+    bookSim.submit(Order(3, 'S', 10, 3));
+    bookSim.submit(Order(4, 'B', 6, 4));
+    bookSim.submit(Order(5, 'S', 9, 5));
+    bookSim.submit(Order(6, 'B', 12, 6));
+    bookSim.submit(Order(7, 'S', 9, 7));
+    bookSim.submit(Order(8, 'B', 7, 8));
+    bookSim.submit(Order(9, 'S', 9, 9));
+    bookSim.submit(Order(10, 'B', 6, 10));
 
-        int price_gen = idtime_gen;
-        bookSim.submit(Order(idtime_gen, 'B', price_gen--, idtime_gen));
-        bookSim.submit(Order(idtime_gen, 'S', price_gen++, idtime_gen));
-    }
-
-    bookSim.getTransactions(n_transactions);
+    Transaction* arr = bookSim.getTransactions(n_transactions);
+    delete[] arr;
     std::cout << "Foi detectada a realização de transações massiva" << std::endl;
     std::cout << "Realizadas" << n_transactions << "no total" << std::endl;
+
+    bookSim.printBuyOrders();
+    bookSim.printSellOrders();
+    bookSim.printTransactions();
+
+    std::cout << "Serão realizados cancelamentos" << std::endl;
+    bookSim.cancel(1);
+    bookSim.cancel(7);
 
     bookSim.printBuyOrders();
     bookSim.printSellOrders();

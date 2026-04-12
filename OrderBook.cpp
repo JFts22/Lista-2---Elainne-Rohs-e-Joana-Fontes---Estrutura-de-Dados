@@ -134,7 +134,7 @@ void OrderBook::removeBuyNode(OrderNode* node) {
     else {
         buyTail = node->prev;
     }
-    delete node;
+    delete[] node;
     buySize--;
 }
 void OrderBook::removeSellNode(OrderNode* node) {
@@ -150,7 +150,7 @@ void OrderBook::removeSellNode(OrderNode* node) {
     else {
         sellTail = node->prev;
     }
-    delete node;
+    delete[] node;
     sellSize--;
 }
 void OrderBook::removeTransactionNode(TransactionNode* node) {
@@ -166,8 +166,32 @@ void OrderBook::removeTransactionNode(TransactionNode* node) {
     else {
         transactionTail = node->prev;
     }
-    delete node;
+    delete[] node;
     transactionSize--;
+}
+int OrderBook::greaterTimeStamp() {
+    OrderNode* curr_b = buyHead;
+    OrderNode* curr_s = sellHead;
+    int time_b = 0;
+    int time_s = 0;
+    while(curr_b) {
+        if(curr_b->order.getTimestamp()>time_b) {
+            time_b = curr_b->order.getTimestamp();
+        }
+        curr_b = curr_b->next;
+    }
+    while(curr_s) {
+        if(curr_s->order.getTimestamp()>time_s) {
+            time_s = curr_s->order.getTimestamp();
+        }
+        curr_s = curr_s->next;
+    }
+    if(time_b>=time_s) {
+        return time_b; 
+    }
+    delete[] curr_b;
+    delete[] curr_s;
+    return time_s;
 }
 
 /// MÉTODOS
@@ -175,73 +199,66 @@ void OrderBook::removeTransactionNode(TransactionNode* node) {
 bool OrderBook::submit(Order order) {
     // caso BUY: busca a sell order mais barata, que esteja em seu orçamento.
     if(order.getType() == 'B') {
-        OrderNode* best = nullptr;
+        OrderNode* best = sellHead;
         OrderNode* curr = sellHead;
-        //Percorre a lista encadeda das ordens de venda disponíveis e 
-        //verifica se o preço da compra é maior ou igual ao de venda
-
+        
+        //Percorre a lista encadeda das ordens de venda disponíveis e acha o menor preço com menor timestamp
         while(curr) {
-            if(curr->order.getPrice() <= order.getPrice()) {
+            if(curr->order.getPrice() < best->order.getPrice()) {
                 best = curr;
             }
+            if(curr->order.getPrice() == best->order.getPrice() && curr->order.getTimestamp() < best->order.getTimestamp()) {
+                best = curr;
+            }
+            curr = curr->next;
         }
+        delete[] curr;
 
         if(sellHead != nullptr && sellHead->order.getPrice() <= order.getPrice()) {
-            Transaction t(order.getId(), sellHead->order.getId(), sellHead->order.getPrice()); //cria transacao
-            TransactionNode* no = new TransactionNode(t); //criando um novo nó para a lista
-            if(transactionHead == nullptr) {
-                // lista vazia
-                transactionHead = no;
-                transactionTail = no;
-            } else {
-                // lista não vazia
-                transactionTail->next = no;
-                transactionTail = no;
-            }
-            transactionSize++;
-            // salvar o nó pra deletar depois
-            OrderNode* temp = sellHead;
-            if(sellHead == sellTail) {
-                // único elemento
-                sellHead = nullptr;
-                sellTail = nullptr;
-            } else {
-                // mais elementos
-                sellHead = sellHead->next;
-                sellHead->prev = nullptr;
-            }
-            delete temp;
-            sellSize--;
+            Transaction t(order.getId(), best->order.getId(), best->order.getPrice()); //cria transacao dada a verificação que existe a possibilidade
+            TransactionNode* newNode = new TransactionNode(t); //criando um novo nó para a lista
+            insertTransactionNode(newNode);
+            removeSellNode(best);
             return true;
-        } else {
-            // se nao achar ordem compatível
+        } 
+        else {
+            // se não achar ordem compatível
             OrderNode* newNode = new OrderNode(order);
-            OrderNode* current = buyHead;
-            while(current != nullptr && current->order.getPrice() > order.getPrice()) {
-                current = current->next;
+            insertBuyNode(newNode);
+            delete[] best;
+            return false;
+        }
+    }
+
+    // caso SELL: busca a buy order mais cara, que esteja em seu orçamento.
+    if(order.getType() == 'S') {
+        OrderNode* best = buyHead;
+        OrderNode* curr = buyHead;
+        
+        //Percorre a lista encadeda das ordens de compra disponíveis e acha o maior preço com menor timestamp
+        while(curr) {
+            if(curr->order.getPrice() > best->order.getPrice()) {
+                best = curr;
             }
-            if(buyHead == nullptr) {
-                // lista vazia
-                buyHead = newNode;
-                buyTail = newNode;
-            } else if(current == buyHead) {
-                // inserir no início
-                newNode->next = buyHead;
-                buyHead->prev = newNode;
-                buyHead = newNode;
-            } else if(current == nullptr) {
-                // inserir no final
-                newNode->prev = buyTail;
-                buyTail->next = newNode;
-                buyTail = newNode;
-            } else {
-                // inserir no meio
-                newNode->prev = current->prev;
-                newNode->next = current;
-                current->prev->next = newNode;
-                current->prev = newNode;
+            if(curr->order.getPrice() == best->order.getPrice() && curr->order.getTimestamp() < best->order.getTimestamp()) {
+                best = curr;
             }
-            buySize++;
+            curr = curr->next;
+        }
+        delete[] curr;
+
+        if(buyHead != nullptr && buyHead->order.getPrice() >= order.getPrice()) {
+            Transaction t(order.getId(), best->order.getId(), best->order.getPrice()); //cria transacao dada a verificação que existe a possibilidade
+            TransactionNode* newNode = new TransactionNode(t); //criando um novo nó para a lista
+            insertTransactionNode(newNode);
+            removeBuyNode(best);
+            return true;
+        } 
+        else {
+            // se não achar ordem compatível
+            OrderNode* newNode = new OrderNode(order);
+            insertSellNode(newNode);
+            delete[] best;
             return false;
         }
     }
@@ -255,22 +272,7 @@ bool OrderBook::cancel(int id) {
         current = current->next;
     }
     if(current != nullptr) { 
-        if(current == buyHead) { //remover primeiro nó
-            buyHead = current->next;
-            if(buyHead != nullptr) {
-                buyHead->prev = nullptr;
-            }
-        } else if(current == buyTail) { //remover último nó
-            buyTail = current->prev;
-            if(buyTail != nullptr) {
-                buyTail->next = nullptr;
-            }
-        } else { //remover nó no meio
-            current->prev->next = current->next;
-            current->next->prev = current->prev;
-        }
-        delete current;
-        buySize--;
+        removeBuyNode(current);
         return true;
     }
     // procura na lista de vendas
@@ -280,22 +282,28 @@ bool OrderBook::cancel(int id) {
         current = current->next;
     }
     if(current != nullptr) {
-        if(current == sellHead) {
-            sellHead = current->next;
-            if(sellHead != nullptr) {
-                sellHead->prev = nullptr;
-            }
-        } else if(current == sellTail) {
-            sellTail = current->prev;
-            if(sellTail != nullptr) {
-                sellTail->next = nullptr;
-            }
-        } else {
-            current->prev->next = current->next;
-            current->next->prev = current->prev;
-        }
-        delete current;
-        sellSize--;
+        removeSellNode(current);
+        return true;
+    }
+    delete[] current;
+
+    // procura na lista de transições
+    TransactionNode* current_t = transactionHead;
+    int id_buy = current_t->transaction.getBuyOrderId();
+    int id_sell = current_t->transaction.getSellOrderId();
+    float price = current_t->transaction.getExecutionPrice();
+    int timestamp = greaterTimeStamp();
+    while(current_t != nullptr && id_buy != id && id_sell != id) {
+        current_t = current_t->next;
+    }
+    if(current_t != nullptr) {
+        Order buy(id_buy, 'B', price, timestamp);
+        OrderNode* newNodeB = new OrderNode(buy);
+        Order sell(id_sell, 'S', price, timestamp);
+        OrderNode* newNodeS = new OrderNode(sell);
+        insertBuyNode(newNodeB);
+        insertSellNode(newNodeS);
+        removeTransactionNode(current_t);
         return true;
     }
     return false;

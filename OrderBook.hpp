@@ -30,6 +30,8 @@ private:
     void removeBuyNode(OrderNode* node);
     void removeSellNode(OrderNode* node);
     void removeTransactionNode(TransactionNode* node);
+    // procurar maior timestamp
+    int greaterTimeStamp();
 
     // Funções auxiliares para o Copy constructor e o Copy Assignment Operator
     void copyBuyList(const OrderBook& other);
